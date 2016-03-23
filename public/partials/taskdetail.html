@@ -1,0 +1,42 @@
+<div class="list" ng-controller='UsersController'>
+  <h4>Tasks</h4>
+  <!-- {{users}} -->
+  <div class="row">
+    <div class="small-10 columns small-centered">
+      <ul class="users">
+        <li ng-repeat="user in users" class="thumbnail listview">
+          <div class="row">
+              <div class="small-10 columns">
+                <a class="row" href="#/users/{{user._id}}">
+                  <div class="small-6 columns">
+                    {{user.name}}
+                  </div>
+                  <div class="small-6 columns">
+                    {{user.email}}
+                  </div>
+                </a>
+                
+              </div>
+              
+              <div class="small-2 columns">
+                <div class="button delete">DELETE</div>
+              </div>
+          </div>
+        </li>
+      </ul>
+  </div>
+	<!-- <form>
+	  <div class="row">
+          <div class="small-12 columns">
+            <input ng-model="data" type="text" placeholder="data">
+          </div>
+      </div>
+
+    <div class="text-center">
+      <button ng-click="setData()" class="button tiny info">Set Data</button>
+    </div>
+
+    {{displayText}}
+
+  </form> -->
+</div>

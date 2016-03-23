@@ -1,0 +1,87 @@
+<div class="list" ng-controller='TasksController'>
+  <h4>Tasks</h4>
+
+  <div class="row">
+    <div class="small-9 columns">
+
+    </div>
+    <div class="small-3 columns">
+      <div class="button">Add Task</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-4 columns">
+      <form class="tasktypeform">
+        <label>
+          <input ng-model="tasktype" type="radio">
+          Pending
+        </label>
+        <label>
+          <input ng-model="tasktype" type="radio">
+          Completed
+        </label>
+        <label>
+          <input ng-model="tasktype" type="radio">
+          All
+        </label>
+      </form>
+    </div>
+    <div class="small-4 columns">
+      <select ng-model="model.id" convert-to-number>
+        <option value="0">dateCreated</option>
+        <option value="1">deadline</option>
+        <option value="2">name</option>
+        <option value="3">assignedUserName</option>
+      </select>
+      {{ model }}
+
+    </div>
+    <div class="small-4 columns">
+      <form class="orderform">
+        <label>
+          <input ng-model="order" type="radio">
+          Ascending
+        </label>
+        <label>
+          <input ng-model="order" type="radio">
+          Descending
+        </label>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-1 columns">
+      <div class="button" ng-click="setprev()">PREV</div>
+    </div>
+    <div class="small-10 columns">
+    </div>
+    <div class="small-1 columns">
+      <div class="button" ng-click="setnext()">NEXT</div>
+    </div>
+  </div>
+  <br>
+  <div class="tasklist">
+    <ul class="tasks">
+      <li ng-repeat="task in tasks|startFrom|limitTo:10" class="thumbnail listview">
+            <div class="row">
+              <div class="small-7 columns">
+                <a>{{task.name}}</a><br>
+              </div>
+
+
+              <div class="small-5 columns">
+                <div class="row">
+                  <div class="small-8 columns">
+                    <p>Deadline:{{task.deadline}}<br>Assigned To:{{task.assignedUserName}}</p>
+                  </div>
+                  <div class="small-4 columns">
+                    <div class="button">DELETE</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </li>
+    </ul>
+  </div>
+
+</div>

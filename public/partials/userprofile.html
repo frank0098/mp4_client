@@ -1,0 +1,73 @@
+<div ng-controller='UserProfile'>
+  <h2>User Profile</h2>
+  <!-- {{completedtasks}} -->
+  <div class="row">
+    <div class="small-6 columns">
+      <h4>Name</h4>
+      <p>{{userdata.name}}</p>
+    </div>
+    <div class="small-6 columns">
+      <h4>Email</h4>
+       <p>{{userdata.email}}</p>
+    </div>
+  </div>
+  <br>
+  <h4>Pending Tasks</h4>
+      <ul class="pendingTasks">
+        <li ng-repeat="task in pendingTasks" class="thumbnail listview">
+          <div class="row">
+            <div class="small-4 columns">
+              {{task.name}}
+            </div>
+            <div class="small-4 columns">
+              {{task.deadline}}
+            </div>
+            <div class="small-4 columns">
+              <div class="button">Completed</div>
+            </div>
+        </div>
+        </li>
+      </ul>
+    <br>
+    <div class="button" ng-click="showcompleted()">Show Completed Task</div>
+      <ul class="completedtasks">
+        <li ng-repeat="task in completedtasks" class="thumbnail listview">
+           <div class="row">
+            <div class="small-4 columns">
+              <p>{{task.name}}</p>
+            </div>
+            <div class="small-8 columns">
+              <p>{{task.deadline}}</p>
+            </div>
+          </div>
+        
+        </li>
+      </ul>
+    </div>
+
+  </div>
+	<!-- <div class="row">
+    <div class="small-10 columns small-centered">
+      <ul class="users">
+        <li ng-repeat="user in users" class="thumbnail listview">
+          <div class="row">
+              <div class="small-10 columns">
+                <a class="row" href="#/users/{{user._id}}">
+                  <div class="small-6 columns">
+                    {{user.name}}
+                  </div>
+                  <div class="small-6 columns">
+                    {{user.email}}
+                  </div>
+                </a>
+                
+              </div>
+              
+              <div class="small-2 columns">
+                <div class="button delete">DELETE</div>
+              </div>
+          </div>
+        </li>
+      </ul>
+  </div> -->
+</div>
