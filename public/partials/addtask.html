@@ -1,5 +1,5 @@
-<div class="list" ng-controller='TaskDetail'>
-  <h2>Edit Task</h2>
+<div class="list" ng-controller='AddTaskController'>
+  <h4>Add Tasks</h4>
   <div class="row">
     <div class="small-8 columns">
    Name *:<br> <input ng-model="formdata.name" ng-value="formdata.name" class="listview" ><br></br>
@@ -14,18 +14,9 @@
       ng-model="formdata.assignedUserName"
       ng-click=""></select>
   </form>
-  Complete?
-   <form>
-        <label>
-          <input type="radio" ng-model="formdata.completed" value="true">
-          Yes
-        </label>
-        <label>
-          <input type="radio" ng-model="formdata.completed" value="false">
-          No
-        </label>
-    </form>
-   <div>{{returninfo}}</div></br>
-    <div class="button" ng-click="updatetaskfunc()">Submit</div>
+  <div>{{returninfo}}</div></br>
+  <div>{{msg}}</div>
+  {{newdata}}
+    <div class="button" ng-click="addtaskfunc()">Submit</div>
  </div>
 </div>

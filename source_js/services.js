@@ -23,6 +23,9 @@ mp4Services.factory('taskliststart', function(){
         },
         setprev:function(){
             start=start-10;
+        },
+        setzero:function(){
+            start=0;
         }
     }
 });

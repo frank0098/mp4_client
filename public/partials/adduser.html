@@ -1,0 +1,14 @@
+<div class="list" ng-controller='AddUserController'>
+  <h4>Add User</h4>
+  <!-- {{formdata}} -->
+  <!-- {{wtf}} -->
+  <div class="row">
+    <div class="small-8 columns">
+   Username:<br> <input ng-model="formdata.name" class="usernameinput listview" placeholder="Enter Your Nane"><br></br>
+   Email:<br> <input ng-model="formdata.email" class="emailinput listview" placeholder="Enter Your Email"><br></br>
+   <div>{{returninfo}}</div></br>
+    <div class="button" ng-click="adduserfunc()">Submit</div>
+ </div>
+ 
+  
+</div>

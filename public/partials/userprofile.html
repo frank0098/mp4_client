@@ -13,17 +13,21 @@
   </div>
   <br>
   <h4>Pending Tasks</h4>
+  {{returninfo}}
+  <!-- {{new}} -->
       <ul class="pendingTasks">
         <li ng-repeat="task in pendingTasks" class="thumbnail listview">
           <div class="row">
-            <div class="small-4 columns">
-              {{task.name}}
+            <div class="small-10 columns">
+              <div class="small-6 columns">
+              <a href="#/tasks/{{task._id}}">{{task.name}}</a>
+              </div>
+              <div class="small-6 columns">
+                {{task.deadline}}
+              </div>
             </div>
-            <div class="small-4 columns">
-              {{task.deadline}}
-            </div>
-            <div class="small-4 columns">
-              <div class="button">Completed</div>
+            <div class="small-2 columns">
+              <div class="button" ng-click="completetask(task._id)">Completed</div>
             </div>
         </div>
         </li>
@@ -34,7 +38,7 @@
         <li ng-repeat="task in completedtasks" class="thumbnail listview">
            <div class="row">
             <div class="small-4 columns">
-              <p>{{task.name}}</p>
+              <a href="#/tasks/{{task._id}}">{{task.name}}</a>
             </div>
             <div class="small-8 columns">
               <p>{{task.deadline}}</p>

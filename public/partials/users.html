@@ -1,6 +1,12 @@
 <div class="list" ng-controller='UsersController'>
   <h4>Users</h4>
+  {{msg}}
   <!-- {{users}} -->
+  <div class="row">
+    <div class="small-2 columns end">
+      <a href="#/adduser"><div class="button delete" >Add User</div></a>
+    </div>
+  </div>
   <div class="row">
     <div class="small-10 columns small-centered">
       <ul class="users">
@@ -19,12 +25,14 @@
               </div>
               
               <div class="small-2 columns">
-                <div class="button delete">DELETE</div>
+
+                <div class="button delete" ng-click="deleteuserfunc(user._id)">DELETE</div>
               </div>
           </div>
         </li>
       </ul>
   </div>
+  
 	<!-- <form>
 	  <div class="row">
           <div class="small-12 columns">

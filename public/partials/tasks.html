@@ -1,49 +1,51 @@
 <div class="list" ng-controller='TasksController'>
   <h4>Tasks</h4>
 
+{{predicate}}
+{{url}}
   <div class="row">
     <div class="small-9 columns">
 
     </div>
     <div class="small-3 columns">
-      <div class="button">Add Task</div>
+      <a href="#/addtask"><div class="button">Add Task</div></a>
     </div>
   </div>
   <div class="row">
     <div class="small-4 columns">
       <form class="tasktypeform">
         <label>
-          <input ng-model="tasktype" type="radio">
+          <input ng-model="tasktype" type="radio" ng-model="tasktype" value="Pending" ng-change="setcompletionfunc()">
           Pending
         </label>
         <label>
-          <input ng-model="tasktype" type="radio">
+          <input ng-model="tasktype" type="radio" ng-model="tasktype" value="Completed" ng-change="setcompletionfunc()">
           Completed
         </label>
         <label>
-          <input ng-model="tasktype" type="radio">
+          <input ng-model="tasktype" type="radio" ng-model="tasktype" value="All" ng-change="setcompletionfunc()">
           All
         </label>
       </form>
     </div>
-    <div class="small-4 columns">
-      <select ng-model="model.id" convert-to-number>
-        <option value="0">dateCreated</option>
-        <option value="1">deadline</option>
-        <option value="2">name</option>
-        <option value="3">assignedUserName</option>
-      </select>
-      {{ model }}
 
+    <div class="small-4 columns">
+      <form name="myForm">
+    <label for="mySelect">Make a choice:</label>
+    <select name="mySelect" id="mySelect"
+      ng-options="option.name for option in sortoption.availableOptions track by option.id"
+      ng-model="sortoption.selectedOption"
+      ng-click="updatesortoption()"></select>
+  </form>
     </div>
     <div class="small-4 columns">
-      <form class="orderform">
+      <form class="orderform" >
         <label>
-          <input ng-model="order" type="radio">
+          <input ng-model="orderv" value='false' type="radio" ng-change="setorderfunc()">
           Ascending
         </label>
         <label>
-          <input ng-model="order" type="radio">
+          <input ng-model="orderv" value='true' type="radio" ng-change="setorderfunc()">
           Descending
         </label>
       </form>
@@ -60,12 +62,14 @@
     </div>
   </div>
   <br>
+  <!-- <pre>Sorting predicate = {{predicate}}; reverse = {{reverse}}</pre> -->
   <div class="tasklist">
     <ul class="tasks">
-      <li ng-repeat="task in tasks|startFrom|limitTo:10" class="thumbnail listview">
+      <!-- <li ng-repeat="task in tasks|startFrom|orderBy:predicate:reverse|ifcomplete:tasktype" class="thumbnail listview"> -->
+        <li ng-repeat="task in tasks" class="thumbnail listview">
             <div class="row">
               <div class="small-7 columns">
-                <a>{{task.name}}</a><br>
+                <a href="#/tasks/{{task._id}}">{{task.name}}</a><br>
               </div>
 
 
@@ -75,7 +79,7 @@
                     <p>Deadline:{{task.deadline}}<br>Assigned To:{{task.assignedUserName}}</p>
                   </div>
                   <div class="small-4 columns">
-                    <div class="button">DELETE</div>
+                    <div class="button" ng-click="deletetask(task._id)">DELETE</div>
                   </div>
                 </div>
               </div>
