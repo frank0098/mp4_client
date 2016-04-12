@@ -20,7 +20,7 @@ mp4Controllers.controller('UsersController', ['$scope', '$http','BaseUrlData',
           angular.forEach(taskslist,function(item){
             var objid=item.replace(/[_\W]+/g, '');
             var everytaskurl=BaseUrlData.getData()+'tasks/'+objid;
-            console.log(everytaskurl);
+            // console.log(everytaskurl);
             $http.get(everytaskurl).success(function(taskdata){
               var taskdetaildata=taskdata.data;
               var updatedtask={
@@ -28,7 +28,8 @@ mp4Controllers.controller('UsersController', ['$scope', '$http','BaseUrlData',
                 email:taskdetaildata.email,
                 description:taskdetaildata.description,
                 deadline:taskdetaildata.deadline,
-                assignedUserName:'unassigned'
+                assignedUserName:"unassigned",
+                assignedUser: ''
               }
               $http({
                   method  : 'PUT',
@@ -44,16 +45,18 @@ mp4Controllers.controller('UsersController', ['$scope', '$http','BaseUrlData',
 
 
 
-        $http.delete(userurl + userid)
+        $http.delete(userdetailurl)
             .success(function(data) {
                 $scope.message = data.message;
                 $http.get(userurl).success(function(data) {
                $scope.users=data.data;
+               $scope.msg=updatedtask;
 
             })
           })
           .error(function(data) {
                $scope.message = data.message;
+               $scope.msg=data;
           });
       }
 
@@ -371,7 +374,7 @@ mp4Controllers.controller('TasksController', ['$scope', '$http','BaseUrlData','$
         $http.delete(baseurl+'/tasks/' + taskid)
             .success(function(data) {
                 $scope.message = data.message;
-                $http.get(baseurl+'/tasks').success(function(data) {
+                $http.get(baseurl+urlsuffix).success(function(data) {
                 $scope.tasks=data.data;
 
             })
@@ -459,6 +462,7 @@ mp4Controllers.controller('TaskDetail', ['$scope', '$http','BaseUrlData','$locat
         }
 
         $scope.updatetaskfunc=function(){
+
         $http({
         method  : 'PUT',
         url     : taskurl+'/'+tID,
@@ -478,21 +482,35 @@ mp4Controllers.controller('TaskDetail', ['$scope', '$http','BaseUrlData','$locat
               var oldpendingobj=getdata.data.pendingTasks;
               var oldpendinglist=[];
               if(oldpendingobj.length!=0){
-                oldpendinglist=oldpendingobj;
-              }
+                // oldpendinglist=oldpendingobj;
+                oldpendinglist=oldpendingobj[0].split(',');
+              } 
+
               if(newcompleted=="false" && oldcompleteness=="true"){
-                oldpendinglist.push(tID);
+                var judge=0;
+                for(var x=0;x<oldpendinglist.length;x++){
+                  if(oldpendinglist[x].replace(/[_\W]+/g, '')==tID){
+                    judge=1;
+                  }
+                }
+                  if(judge==0)
+                    oldpendinglist.push(tID);
+
               }
               else{
-                var idx=oldpendinglist.indexOf(tID);
-                if(idx>-1){
-                  oldpendinglist.splice(idx,1);
+                var tmp_pendinglist=[]
+
+                for(var x=0;x<oldpendinglist.length;x++){
+                  var thing=oldpendinglist[x].replace(/[_\W]+/g, '');
+                  if(thing!=tID){
+                    tmp_pendinglist.push(thing);
+                  }
                 }
+                oldpendinglist=tmp_pendinglist;
 
               }
-              var container=new Array(1);
-              container[0]=oldpendinglist;
-
+              var container=[]
+              container.push(oldpendinglist);
               var newdata={
                 name:getdata.data.name,
                 email:getdata.data.email,
@@ -508,44 +526,137 @@ mp4Controllers.controller('TaskDetail', ['$scope', '$http','BaseUrlData','$locat
                    }).error(function(data){
                     $scope.returninfo = data.message;
                    })
-            })
+              })
           }
           else if(newassigned!=oldassigned){
             var oldurl=userurl+'/'+name_id_dict[oldassigned];
             var newurl=userurl+'/'+name_id_dict[newassigned];
-            if(oldcompleteness!="true" || newcompleted!="true"){
+            var oldpendinglist=[];
+            var newpendinglist=[];
+            $scope.cont=oldurl;
+
+            if(oldassigned=='unassigned' && newassigned!='unassigned'){
+              //add into pending tasks
+              $http.get(newurl).success(function(getdata2){
+                var newdata=getdata2.data;
+                var newpendingobj=newdata.pendingTasks;
+                if(newpendingobj.length!=0){
+                    // newpendinglist=newpendingobj;
+                    newpendinglist=newpendingobj[0].split(',');
+                  }
+                  if(newcompleted!="true"){
+                    newpendinglist.push(tID);
+                    var container2=[]
+                    container2.push(newpendinglist);
+                    var data2={
+                    name:newdata.name,
+                    email:newdata.email,
+                    pendingTasks:container2
+                    }
+                    $http({
+                    method  : 'PUT',
+                    url     : newurl,
+                    data    : $.param(data2),
+                    headers : {'Content-Type': 'application/x-www-form-urlencoded'} 
+                   }).success(function(data){
+                    $scope.returninfo = data.message;
+                    
+                   }).error(function(data){
+                    $scope.returninfo = data.message;
+                   })
+
+                  }
+
+              })
+              
+
+            }
+            else if (oldassigned!='unassigned' && newassigned=='unassigned'){
+              //remove from pending tasks
+              $http.get(oldurl).success(function(getdata1){
+                var olddata=getdata1.data;
+                var oldpendingobj=olddata.pendingTasks;
+
+                if(oldpendingobj.length!=0){
+                    oldpendinglist=oldpendingobj[0].split(',');
+                  }
+                if(oldcompleteness!="true"){
+                  console.log(oldpendinglist)
+                  console.log(oldpendinglist.length)
+                   var tmp_pendinglist=[]
+                    for(var x=0;x<oldpendinglist.length;x++){
+                      var thing=oldpendinglist[x].split(/[\s/]+/).pop();
+                      if(thing!=tID && !(tID in tmp_pendinglist)){
+                        tmp_pendinglist.push(thing);
+                      }
+                    }
+                  oldpendinglist=tmp_pendinglist;
+                  var container1=[]
+                  container1.push(oldpendinglist);
+                  var data1={
+                      name:olddata.name,
+                      email:olddata.email,
+                      pendingTasks:container1
+                    }
+                  $http({
+                      method  : 'PUT',
+                      url     : oldurl,
+                      data    : $.param(data1),
+                      headers : {'Content-Type': 'application/x-www-form-urlencoded'} 
+                     }).success(function(data){
+                      $scope.returninfo = data.message;
+
+                     }).error(function(data){
+                      $scope.returninfo = data.message;
+                     })
+                }
+                
+              })
+              
+
+            }
+            else if(oldassigned!='unassigned' && newassigned!='unassigned'){
+
+                //if need to update user
+                 if(oldcompleteness!="true" || newcompleted!="true"){
               $http.get(oldurl).success(function(getdata1){
                 var olddata=getdata1.data;
                 $http.get(newurl).success(function(getdata2){
                   var newdata=getdata2.data;
-                  var oldpendinglist=[];
-                  var newpendinglist=[];
                   var oldpendingobj=olddata.pendingTasks;
                   var newpendingobj=newdata.pendingTasks;
                   if(oldpendingobj.length!=0){
-                    oldpendinglist=oldpendingobj;
+                    oldpendinglist=oldpendingobj[0].split(',');
                   }
                   if(newpendingobj.length!=0){
-                    newpendinglist=newpendingobj;
+                    newpendinglist=newpendingobj[0].split(',');
                   }
 
                   if(oldcompleteness=="false" && newcompleted=="false"){
-
-                    console.log(newassigned+'       '+oldassigned)
-                    var idx=oldpendinglist.indexOf(tID);
-                    if(idx>-1){
-                      oldpendinglist.splice(idx,1);
-                    newpendinglist.push(tID);
+                    var tmp_pendinglist=[]
+                    for(var x=0;x<oldpendinglist.length;x++){
+                      var thing=oldpendinglist[x].replace(/[_\W]+/g, '');
+                      if(thing!=tID && !(tID in tmp_pendinglist)){
+                        tmp_pendinglist.push(thing);
+                      }
                     }
+                    oldpendinglist=tmp_pendinglist;
+                    newpendinglist.push(tID);
+                    // console.log(oldpendingobj,oldpendinglist)
                   }
                   else if(oldcompleteness=="true" && newcompleted=="false"){
                     newpendinglist.push(tID);
                   }
                   else if(oldcompleteness=="false" && newcompleted=="true"){
-                    var idx=oldpendinglist.indexOf(tID);
-                    if(idx>-1){
-                      oldpendinglist.splice(idx,1);
+                    var tmp_pendinglist=[]
+                    for(var x=0;x<oldpendinglist.length;x++){
+                      var thing=oldpendinglist[x].replace(/[_\W]+/g, '');
+                      if(thing!=tID && !(tID in tmp_pendinglist)){
+                        tmp_pendinglist.push(thing);
+                      }
                     }
+                    oldpendinglist=tmp_pendinglist;
+                    
                   }
                   var container1=[]
                   var container2=[]
@@ -568,18 +679,19 @@ mp4Controllers.controller('TaskDetail', ['$scope', '$http','BaseUrlData','$locat
                     headers : {'Content-Type': 'application/x-www-form-urlencoded'} 
                    }).success(function(data){
                     $scope.returninfo = data.message;
-                        $http({
-                        method  : 'PUT',
-                        url     : newurl,
-                        data    : $.param(data2),
-                        headers : {'Content-Type': 'application/x-www-form-urlencoded'} 
-                       }).success(function(data){
-                        $scope.returninfo = data.message;
-                        
-                       }).error(function(data){
-                        $scope.returninfo = data.message;
-                       })
 
+                   }).error(function(data){
+                    $scope.returninfo = data.message;
+                   })
+
+                   $http({
+                    method  : 'PUT',
+                    url     : newurl,
+                    data    : $.param(data2),
+                    headers : {'Content-Type': 'application/x-www-form-urlencoded'} 
+                   }).success(function(data){
+                    $scope.returninfo = data.message;
+                    
                    }).error(function(data){
                     $scope.returninfo = data.message;
                    })
@@ -587,6 +699,12 @@ mp4Controllers.controller('TaskDetail', ['$scope', '$http','BaseUrlData','$locat
                 })
               })
             }
+
+
+
+            }//end else
+
+           
 
           }
         }
@@ -700,11 +818,12 @@ mp4Controllers.controller('AddTaskController', ['$http','$scope' , '$window','Ba
 
 
 mp4Controllers.controller('SettingsController', ['$scope' , '$window','BaseUrlData' , function($scope, $window,BaseUrlData) {
-  $scope.url = $window.sessionStorage.baseurl;
+  // $scope.url = $window.sessionStorage.baseurl;
   // $scope.displayText = BaseUrlData.getData();
+  $scope.url=BaseUrlData.getData();
   $scope.setUrl = function(){
-    $window.sessionStorage.baseurl = $scope.url;
     BaseUrlData.setData($scope.url);
+    $scope.displayText='URL is set successfully'
     // $scope.displayText = BaseUrlData.getData();
 
   };
